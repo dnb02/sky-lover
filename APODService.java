@@ -61,7 +61,26 @@ public class APODService {
         private APOD fetchAPOD() throws IOException {
             // Your existing fetchAPOD() logic goes here
             // Just make sure it returns an APOD object
-            return new APOD("Sample Title", "Sample Explanation", "2024-03-24", "https://example.com/image.jpg", "1.0", "Sample Copyright", "image", "https://example.com");
+
+       // API URL
+        String apiUrl = "https://apod.ellanan.com/api";
+
+        // Make HTTP request to fetch APOD data
+        HttpURLConnection connection = (HttpURLConnection) new URL(apiUrl).openConnection();
+        connection.setRequestMethod("GET");
+
+        // Read response
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        StringBuilder response = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            response.append(line);
+        }
+        reader.close();
+
+        // Parse JSON response
+        Gson gson = new Gson();
+        return gson.fromJson(response.toString(), APOD.class);
         }
     }
 }
