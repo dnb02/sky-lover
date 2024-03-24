@@ -53,7 +53,7 @@ public class Gui extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     // Connect to APODService server
-                    Socket socket = new Socket("localhost", 12345);
+                    Socket socket = new Socket("10.110.11.34", 12345);
 
                     // Send a request to the server
                     ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
