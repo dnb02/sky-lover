@@ -2,20 +2,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.io.*;
+import java.net.Socket;
 import java.net.URL;
-import javax.imageio.ImageIO;
-
 public class Gui extends JFrame {
     private JButton getAPODButton;
     private JLabel imageLabel;
     private JTextArea explanationArea;
-    private APODService apodService;
 
     public Gui() {
-        apodService = new APODService();
-
         setTitle("Welcome, lovers of the sky");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH); // Set to full-screen mode
@@ -25,7 +20,7 @@ public class Gui extends JFrame {
         JLabel titleLabel = new JLabel("Astronomy Picture of the day!");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
-        
+
         JLabel instructionLabel = new JLabel("Click the button below to get the astronomy picture of the day");
         instructionLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         instructionLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -57,13 +52,27 @@ public class Gui extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    // Fetch APOD data from API
-                    APOD apod = apodService.fetchAPOD();
-                    
-                    // Display image and explanation
+                    // Connect to APODService server
+                    Socket socket = new Socket("localhost", 12345);
+
+                    // Send a request to the server
+                    ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                    out.writeObject("APOD_REQUEST");
+                    out.flush();
+
+                    // Receive APOD data from the server
+                    ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                    APOD apod = (APOD) in.readObject();
+
+                    // Display received APOD data
                     displayImage(apod.getHdurl());
                     displayExplanation(apod.getExplanation());
-                } catch (IOException ex) {
+
+                    // Close resources
+                    in.close();
+                    out.close();
+                    socket.close();
+                } catch (IOException | ClassNotFoundException ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(Gui.this, "Error fetching APOD data!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -71,13 +80,19 @@ public class Gui extends JFrame {
         });
     }
 
-    private void displayImage(String imageUrl) throws IOException {
-        // Fetch the image from URL
-        URL url = new URL(imageUrl);
-        BufferedImage image = ImageIO.read(url);
+    private void displayImage(String imageUrl) {
+        try {
+            // Fetch the image from URL
+            ImageIcon imageIcon = new ImageIcon(new URL(imageUrl));
+            Image image = imageIcon.getImage();
+            Image scaledImage = image.getScaledInstance(500, -1, Image.SCALE_SMOOTH);
 
-        // Display the image
-        imageLabel.setIcon(new ImageIcon(image));
+            // Display the image
+            imageLabel.setIcon(new ImageIcon(scaledImage));
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(Gui.this, "Error loading image!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void displayExplanation(String explanation) {
