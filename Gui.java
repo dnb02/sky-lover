@@ -6,24 +6,23 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 import javax.imageio.ImageIO;
-import com.google.gson.*;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 
 public class Gui extends JFrame {
     private JButton getAPODButton;
     private JLabel imageLabel;
     private JTextArea explanationArea;
+    private APODService apodService;
 
     public Gui() {
+        apodService = new APODService();
+
         setTitle("Welcome, lovers of the sky");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH); // Set to full-screen mode
         setUndecorated(false); // Show title bar and borders
 
         // Create components
-        JLabel titleLabel = new JLabel("APOD");
+        JLabel titleLabel = new JLabel("Astronomy Picture of the day!");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
         titleLabel.setHorizontalAlignment(JLabel.CENTER);
         
@@ -59,7 +58,7 @@ public class Gui extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     // Fetch APOD data from API
-                    APOD apod = fetchAPOD();
+                    APOD apod = apodService.fetchAPOD();
                     
                     // Display image and explanation
                     displayImage(apod.getHdurl());
@@ -70,28 +69,6 @@ public class Gui extends JFrame {
                 }
             }
         });
-    }
-
-    private APOD fetchAPOD() throws IOException {
-        // API URL
-        String apiUrl = "https://apod.ellanan.com/api";
-
-        // Make HTTP request to fetch APOD data
-        HttpURLConnection connection = (HttpURLConnection) new URL(apiUrl).openConnection();
-        connection.setRequestMethod("GET");
-
-        // Read response
-        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuilder response = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            response.append(line);
-        }
-        reader.close();
-
-        // Parse JSON response
-        Gson gson = new Gson();
-        return gson.fromJson(response.toString(), APOD.class);
     }
 
     private void displayImage(String imageUrl) throws IOException {
