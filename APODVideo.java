@@ -1,6 +1,6 @@
 import com.google.gson.*;
 import java.io.*;
-public class APODVideo implements Serializable extends APOD{
+public class APODVideo extends APOD implements Serializable{
 
   private String title;
   private String explanation;
@@ -11,8 +11,8 @@ public class APODVideo implements Serializable extends APOD{
   private String mediaType;
   private String url;
 
-  public APOD(String title, String explanation, String date,String hdurl, String serviceVersion, String copyright, String mediaType, String url) {
-    super(title, explanation, date, url, serviceVersion, "", mediaType);
+  public APODVideo(String title, String explanation, String date,String hdurl, String serviceVersion, String copyright, String mediaType, String url) {
+    super(title, explanation, date, url, serviceVersion, "", mediaType, url);
   }
 
   public String getTitle() {
@@ -39,13 +39,6 @@ public class APODVideo implements Serializable extends APOD{
     this.date = date;
   }
 
-  public String getHdurl() {
-    return hdurl;
-  }
-
-  public void setHdurl(String hdurl) {
-    this.hdurl = hdurl;
-  }
 
   public String getServiceVersion() {
     return serviceVersion;
@@ -53,14 +46,6 @@ public class APODVideo implements Serializable extends APOD{
 
   public void setServiceVersion(String serviceVersion) {
     this.serviceVersion = serviceVersion;
-  }
-
-  public String getCopyright() {
-    return copyright;
-  }
-
-  public void setCopyright(String copyright) {
-    this.copyright = copyright;
   }
 
   public String getMediaType() {

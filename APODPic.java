@@ -1,6 +1,6 @@
 import com.google.gson.*;
 import java.io.*;
-public class APODPic implements Serializable extends APOD{
+public class APODPic extends APOD implements Serializable{
 
   private String title;
   private String explanation;
@@ -11,7 +11,7 @@ public class APODPic implements Serializable extends APOD{
   private String mediaType;
   private String url;
 
-  public APOD(String title, String explanation, String date, String hdurl, String serviceVersion, String copyright, String mediaType, String url) {
+  public APODPic(String title, String explanation, String date, String hdurl, String serviceVersion, String copyright, String mediaType, String url) {
     super(title, explanation, date, hdurl, serviceVersion, copyright, mediaType, url);
   }
 
