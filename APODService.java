@@ -43,7 +43,15 @@ public class APODService {
             try {
                 // Fetch APOD data
                 APOD apod = fetchAPOD();
-
+ 		APOD processedApod;
+                if (apod.getMediaType().equals("image")) {
+                    processedApod = new APODPic(apod.getTitle(), apod.getExplanation(), apod.getDate(), apod.getHdurl(), apod.getServiceVersion(), apod.getCopyright(), apod.getMediaType(), apod.getUrl());
+                } else if (apod.getMediaType().equals("video")) {
+                    processedApod = new APODVideo(apod.getTitle(), apod.getExplanation(), apod.getDate(), apod.getHdurl(), apod.getServiceVersion(), apod.getCopyright(), apod.getMediaType(), apod.getUrl());
+                } else {
+                    // Handle other media types if needed
+                    processedApod = apod;
+                }
                 // Send APOD data to client
                 ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
                 out.writeObject(apod);
