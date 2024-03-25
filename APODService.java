@@ -88,8 +88,15 @@ public class APODService {
 
         // Parse JSON response
         Gson gson = new Gson();
-        return gson.fromJson(response.toString(), APOD.class);
-        }
+        APOD apod = gson.fromJson(response.toString(), APOD.class);
+      if (apod.getHdurl() != null && !apod.getHdurl().isEmpty()) {
+        apod.setMediaType("image");
+    } else {
+        apod.setMediaType("video");
+    }  
+	return apod;
     }
+    
+}
 }
 
