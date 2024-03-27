@@ -49,7 +49,8 @@ public class MainScreen extends JFrame {
 
         button2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                openPlaceholderWindow("Two");
+                // Open the SolarPositionCalculator GUI
+                openSolarPositionCalculator();
             }
         });
 
@@ -76,16 +77,9 @@ public class MainScreen extends JFrame {
         add(button3);
     }
 
-    private void openPlaceholderWindow(String labelText) {
-        JFrame frame = new JFrame();
-        frame.setTitle("Placeholder Window");
-        frame.setSize(200, 100);
-        frame.setLocationRelativeTo(null); // Center the window
-
-        JLabel label = new JLabel(labelText);
-        frame.add(label);
-
-        frame.setVisible(true);
+    private void openSolarPositionCalculator() {
+        SolarPositionCalculator calculator = new SolarPositionCalculator();
+        calculator.setVisible(true);
     }
 
     private void displayAPOD(APOD apod) {

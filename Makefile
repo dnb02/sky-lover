@@ -1,11 +1,19 @@
 server: 
-	javac -cp './gson-2.10.1.jar:' APOD*.java	
-	java -cp './gson-2.10.1.jar:' APODService.java	
+	javac -cp './jars/gson-2.10.1.jar:' APOD*.java	
+	java -cp './jars/gson-2.10.1.jar:' APODService.java	
 gui:
-	javac -cp './gson-2.10.1.jar:.' ApodGui.java
-	javac -cp './gson-2.10.1.jar:jsoup-1.17.2.jar:.' NewsScraper.java
-	javac -cp './gson-2.10.1.jar:jsoup-1.17.2.jar:.' MainScreen.java
-	java -cp './gson-2.10.1.jar:jsoup-1.17.2.jar:.' MainScreen
+	javac -cp './jars/gson-2.10.1.jar:' ApodGui.java	
+	javac -cp './jars/gson-2.10.1.jar:./jars/jsoup-1.17.2.jar:.' NewsScraper.java
+	javac -cp './jars/solarpositioning-2.0.2.jar:./jars/slf4j-api-1.7.36.jar:./jars/sqlite-jdbc-3.45.2.0.jar:./jars/slf4j-api-1.7.36.jar:./jars/sqlite-jdbc-3.45.2.0.jar:.' SolarPositionCalculator.java
+	java -cp './jars/solarpositioning-2.0.2.jar:./jars/slf4j-api-1.7.36.jar:./jars/sqlite-jdbc-3.45.2.0.jar:./jars/slf4j-api-1.7.36.jar:./jars/sqlite-jdbc-3.45.2.0.jar:.' SolarPositionCalculator
 
+spos:
+	javac -cp './jars/solarpositioning-2.0.2.jar:./jars/slf4j-api-1.7.36.jar:./jars/sqlite-jdbc-3.45.2.0.jar:.' SolarPositionCalculator.java
+	java -cp './jars/solarpositioning-2.0.2.jar:./jars/slf4j-api-1.7.36.jar:./jars/sqlite-jdbc-3.45.2.0.jar:.' SolarPositionCalculator
+
+db:
+	javac -cp './jars/slf4j-api-1.7.36.jar:./jars/sqlite-jdbc-3.45.2.0.jar:.' Try.java
+	java -cp './jars/slf4j-api-1.7.36.jar:./jars/sqlite-jdbc-3.45.2.0.jar:.' Try
+	
 clean:
 	rm -rf *.class
