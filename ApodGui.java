@@ -14,7 +14,7 @@ public class ApodGui extends JFrame {
 
     public ApodGui() {
         setTitle("Welcome, lovers of the sky");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH); // Set to full-screen mode
         setUndecorated(false); // Hide title bar and borders
 

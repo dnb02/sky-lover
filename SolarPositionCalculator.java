@@ -20,8 +20,8 @@ public class SolarPositionCalculator extends JFrame {
 
     public SolarPositionCalculator() {
         setTitle("Solar Position Calculator");
-        setSize(400, 300);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(500, 400);
+        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         // Initialize components
