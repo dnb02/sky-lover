@@ -57,21 +57,33 @@ public class MainScreen extends JFrame {
         button3.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    // Create a NewsScraper instance
-                    NewsScraper newsScraper = new NewsScraper();
-
-                    // Scrape news headlines
-                    List<String> headlines = newsScraper.getHeadlines("https://phys.org/space-news/astronomy/");
-
-                    // Display news headlines in a new window
-                    displayNews(headlines);
-                } catch (IOException ex) {
+                    // Connect to NewsScraperServer
+                    Socket socket = new Socket("localhost", 12346);
+        
+                    // Send a request to the server
+                    ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                    out.writeObject("NEWS_REQUEST");
+                    out.flush();
+        
+                    // Receive scraped headlines from the server
+                    ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+                    List<String> headlines = (List<String>) in.readObject();
+        
+                    // Display scraped headlines in a new window
+                    NewsScraperGui newsScraperGui = new NewsScraperGui(headlines);
+                    newsScraperGui.setVisible(true);
+        
+                    // Close resources
+                    in.close();
+                    out.close();
+                    socket.close();
+                } catch (IOException | ClassNotFoundException ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(MainScreen.this, "Error fetching news!", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
-
+        
         add(button1);
         add(button2);
         add(button3);

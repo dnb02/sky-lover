@@ -1,0 +1,167 @@
+import com.google.gson.Gson;
+
+import java.io.*;
+import java.net.*;
+import java.util.List;
+
+public class CombinedServer {
+    public static void main(String[] args) {
+        final int APOD_PORT = 12345; 
+        final int NEWS_PORT = 12346;
+
+        // Start APOD service
+        startAPODService(APOD_PORT);
+
+        // Start News Scraper service
+        startNewsScraperService(NEWS_PORT);
+    }
+
+    private static void startAPODService(int port) {
+        Thread apodThread = new Thread(() -> {
+            try {
+                ServerSocket serverSocket = new ServerSocket(port);
+                System.out.println("APODService started. Waiting for requests...");
+
+                while (true) {
+                    Socket clientSocket = serverSocket.accept();
+                    System.out.println("Client connected to APODService: " + clientSocket);
+
+                    // Create a new thread to handle each client request
+                    Thread clientHandler = new Thread(new APODClientHandler(clientSocket));
+                    clientHandler.start();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        apodThread.start();
+    }
+
+    private static void startNewsScraperService(int port) {
+        Thread newsScraperThread = new Thread(() -> {
+            try {
+                ServerSocket serverSocket = new ServerSocket(port);
+                System.out.println("News Scraper Service started. Waiting for requests...");
+
+                while (true) {
+                    Socket clientSocket = serverSocket.accept();
+                    System.out.println("Client connected to News Scraper Service: " + clientSocket);
+
+                    // Create a new thread to handle each client request
+                    Thread clientHandler = new Thread(new NewsScraperClientHandler(clientSocket));
+                    clientHandler.start();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        newsScraperThread.start();
+    }
+
+    static class APODClientHandler implements Runnable {
+        private Socket clientSocket;
+
+        public APODClientHandler(Socket clientSocket) {
+            this.clientSocket = clientSocket;
+        }
+
+        @Override
+        public void run() {
+            try {
+                // Fetch APOD data
+                APOD apod = fetchAPOD();
+                APOD processedApod;
+                if (apod.getMediaType().equals("image")) {
+                    processedApod = new APODPic(apod.getTitle(), apod.getExplanation(), apod.getDate(), apod.getHdurl(), apod.getServiceVersion(), apod.getCopyright(), apod.getMediaType(), apod.getUrl());
+                } else if (apod.getMediaType().equals("video")) {
+                    processedApod = new APODVideo(apod.getTitle(), apod.getExplanation(), apod.getDate(), apod.getHdurl(), apod.getServiceVersion(), apod.getCopyright(), apod.getMediaType(), apod.getUrl());
+                } else {
+                    // Handle other media types if needed
+                    processedApod = apod;
+                }
+
+                // Send APOD data to client
+                ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+                out.writeObject(apod);
+                out.flush();
+                System.out.println("Sent APOD data to client: " + apod.getTitle());
+
+                // Close resources
+                out.close();
+                clientSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private APOD fetchAPOD() throws IOException {
+            // Your existing fetchAPOD() logic goes here
+            // Just make sure it returns an APOD object
+
+            // API URL
+            String apiUrl = "https://apod.ellanan.com/api";
+
+            // Make HTTP request to fetch APOD data
+            HttpURLConnection connection = (HttpURLConnection) new URL(apiUrl).openConnection();
+            connection.setRequestMethod("GET");
+
+            // Read response
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+
+            // Parse JSON response
+            Gson gson = new Gson();
+            APOD apod = gson.fromJson(response.toString(), APOD.class);
+            if (apod.getHdurl() != null && !apod.getHdurl().isEmpty()) {
+                apod.setMediaType("image");
+            } else {
+                apod.setMediaType("video");
+            } 
+            return apod;
+        }
+    }
+
+    static class NewsScraperClientHandler implements Runnable {
+        private Socket clientSocket;
+
+        public NewsScraperClientHandler(Socket clientSocket) {
+            this.clientSocket = clientSocket;
+        }
+
+        @Override
+        public void run() {
+            try {
+                // Scrape news headlines
+                List<String> headlines = scrapeNews();
+
+                // Send scraped headlines to client
+                ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+                out.writeObject(headlines);
+                out.flush();
+
+                // Close resources
+                out.close();
+                clientSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private List<String> scrapeNews() {
+            // Your existing scraping logic goes here
+            // Just make sure it returns a List<String> of headlines
+            NewsScraper newsScraper = new NewsScraper();
+            try {
+                return newsScraper.getHeadlines("https://phys.org/space-news/astronomy/");
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+    }
+}

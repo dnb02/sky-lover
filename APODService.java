@@ -4,7 +4,7 @@ import java.net.*;
 
 public class APODService {
     public static void main(String[] args) {
-        final int PORT = 12345; // Change this to the desired port number
+        final int PORT = 12345; 
         ServerSocket serverSocket = null;
         try {
             serverSocket = new ServerSocket(PORT);
