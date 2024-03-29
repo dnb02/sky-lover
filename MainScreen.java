@@ -50,7 +50,7 @@ public class MainScreen extends JFrame {
         button2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Open the SolarPositionCalculator GUI
-                openSolarPositionCalculator();
+                openSolarPositionCalculatorGUI();
             }
         });
 
@@ -58,7 +58,7 @@ public class MainScreen extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     // Connect to NewsScraperServer
-                    Socket socket = new Socket("localhost", 12346);
+                    Socket socket = new Socket("10.110.11.34", 12346);
         
                     // Send a request to the server
                     ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
