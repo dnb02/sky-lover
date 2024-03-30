@@ -1,4 +1,4 @@
-CCFLAGS = -cp '../jars/jsoup-1.17.2.jar:../jars/gson-2.10.1.jar:../jars/solarpositioning-2.0.2.jar:../jars/slf4j-api-1.7.36.jar:../jars/sqlite-jdbc-3.45.2.0.jar:.:..'
+CCFLAGS = -cp './jars/jsoup-1.17.2.jar:./jars/gson-2.10.1.jar:./jars/solarpositioning-2.0.2.jar:./jars/slf4j-api-1.7.36.jar:./jars/sqlite-jdbc-3.45.2.0.jar:.'
 dum:
 	javac $(CCFLAGS) SolarPositionCalculator.java
 	java $(CCFLAGS) SolarPositionCalculator.java
@@ -17,4 +17,8 @@ db:
 	java -cp './jars/slf4j-api-1.7.36.jar:./jars/sqlite-jdbc-3.45.2.0.jar:.' Try
 	
 clean:
-	rm -rf *.class
+	rm -rf ./client/*.class
+	rm -rf ./server/*.class
+working:
+	javac -cp './jars/jsoup-1.17.2.jar:./jars/gson-2.10.1.jar:./jars/solarpositioning-2.0.2.jar:./jars/slf4j-api-1.7.36.jar:./jars/sqlite-jdbc-3.45.2.0.jar:.' server/*.java
+
