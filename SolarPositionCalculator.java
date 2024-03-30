@@ -1,10 +1,15 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.*;
-import java.util.ArrayList;
-import java.time.ZonedDateTime;
+import java.io.*;
+import java.net.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import net.e175.klaus.solarpositioning.*;
+import java.time.ZonedDateTime;
 
 public class SolarPositionCalculator extends JFrame {
     private JLabel latitudeLabel, longitudeLabel, elevationLabel, pressureLabel, temperatureLabel;
@@ -20,8 +25,8 @@ public class SolarPositionCalculator extends JFrame {
 
     public SolarPositionCalculator() {
         setTitle("Solar Position Calculator");
-        setSize(500, 400);
-        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         // Initialize components
@@ -40,10 +45,6 @@ public class SolarPositionCalculator extends JFrame {
         calculateButton = new JButton("Calculate");
         resultArea = new JTextArea(10, 30);
         resultArea.setEditable(false);
-
-        // Populate city names in the combo box
-        cityComboBox = new JComboBox<>();
-        populateCities();
 
         // Layout
         setLayout(new GridLayout(8, 2));
@@ -67,7 +68,7 @@ public class SolarPositionCalculator extends JFrame {
         calculateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                calculateSolarPosition();
+                calculateAndDisplaySolarPosition();
             }
         });
 
@@ -78,30 +79,6 @@ public class SolarPositionCalculator extends JFrame {
                 fillCoordinates();
             }
         });
-    }
-
-    private void populateCities() {
-        try {
-            // Connect to the SQLite database
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:cities.db");
-            Statement stmt = conn.createStatement();
-
-            // Execute query to get cities
-            ResultSet rs = stmt.executeQuery("SELECT name FROM cities");
-
-            // Populate the combo box with city names
-            while (rs.next()) {
-                String cityName = rs.getString("name");
-                cityComboBox.addItem(cityName);
-            }
-
-            // Close connections
-            rs.close();
-            stmt.close();
-            conn.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     private void fillCoordinates() {
@@ -133,7 +110,7 @@ public class SolarPositionCalculator extends JFrame {
         }
     }
 
-    private void calculateSolarPosition() {
+    private void calculateAndDisplaySolarPosition() {
         try {
             double latitude = Double.parseDouble(latitudeField.getText());
             double longitude = Double.parseDouble(longitudeField.getText());
@@ -141,18 +118,30 @@ public class SolarPositionCalculator extends JFrame {
             double pressure = Double.parseDouble(pressureField.getText());
             double temperature = Double.parseDouble(temperatureField.getText());
 
-            ZonedDateTime dateTime = ZonedDateTime.now();
-            SolarPosition position = SPA.calculateSolarPosition(
-                    dateTime,
-                    latitude,
-                    longitude,
-                    elevation,
-                    DeltaT.estimate(dateTime.toLocalDate()),
-                    pressure,
-                    temperature
-            );
+            // Create Spos object with input data
+            Spos spos = new Spos(latitude, longitude, pressure, elevation, temperature, "");
 
-            resultArea.setText("Solar Position:\n" + position.toString());
+            // Connect to the Solar Position Calculator Server
+            try (Socket socket = new Socket("10.110.11.34", 12347)) {
+                // Send Spos object to the server
+                ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
+                outputStream.writeObject(spos);
+                outputStream.flush();
+
+                // Receive updated Spos object from the server
+                ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
+                Spos updatedSpos = (Spos) inputStream.readObject();
+
+                // Display solar position in the result area
+                resultArea.setText(updatedSpos.getSunpos());
+
+                // Close resources
+                inputStream.close();
+                outputStream.close();
+            } catch (IOException | ClassNotFoundException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error calculating solar position!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Invalid input. Please enter numbers only.", "Error", JOptionPane.ERROR_MESSAGE);
         }

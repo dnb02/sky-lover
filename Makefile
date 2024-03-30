@@ -5,11 +5,14 @@ dum:
 server: 
 	javac $(CCFLAGS) ./server/CombinedServer.java
 	java $(CCFLAGS) ./server/CombinedServer.java
+dum2:
+	javac $(CCFLAGS) SolarPositionCalculatorServer.java
+	java $(CCFLAGS) SolarPositionCalculatorServer.java
 gui: 
 	javac $(CCFLAGS) ./client/MainScreen.java	
 
 spos:
-	javac -cp './jars/solarpositioning-2.0.2.jar:./jars/slf4j-api-1.7.36.jar:./jars/sqlite-jdbc-3.45.2.0.jar:.' SolarPositionCalculator.java
+	javac -cp '/jars/solarpositioning-2.0.2.jar:./jars/slf4j-api-1.7.36.jar:./jars/sqlite-jdbc-3.45.2.0.jar:.' SolarPositionCalculator.java
 	java -cp './jars/solarpositioning-2.0.2.jar:./jars/slf4j-api-1.7.36.jar:./jars/sqlite-jdbc-3.45.2.0.jar:.' SolarPositionCalculator
 
 db:
