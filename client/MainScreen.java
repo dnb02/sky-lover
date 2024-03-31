@@ -49,8 +49,7 @@ public class MainScreen extends JFrame {
 
         button2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // Open the SolarPositionCalculator GUI
-                //openSolarPositionCalculatorGUI();
+                openSolarPositionCalculator();
             }
         });
 
@@ -59,20 +58,20 @@ public class MainScreen extends JFrame {
                 try {
                     // Connect to NewsScraperServer
                     Socket socket = new Socket("10.110.11.34", 12346);
-        
+
                     // Send a request to the server
                     ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
                     out.writeObject("NEWS_REQUEST");
                     out.flush();
-        
+
                     // Receive scraped headlines from the server
                     ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
                     List<String> headlines = (List<String>) in.readObject();
-        
+
                     // Display scraped headlines in a new window
                     NewsScraperGui newsScraperGui = new NewsScraperGui(headlines);
                     newsScraperGui.setVisible(true);
-        
+
                     // Close resources
                     in.close();
                     out.close();
@@ -83,7 +82,7 @@ public class MainScreen extends JFrame {
                 }
             }
         });
-        
+
         add(button1);
         add(button2);
         add(button3);
@@ -100,26 +99,6 @@ public class MainScreen extends JFrame {
         apodGui.displayImage(apod.getHdurl());
         apodGui.displayExplanation(apod.getExplanation());
         apodGui.setVisible(true);
-    }
-
-    private void displayNews(List<String> headlines) {
-        // Create a new window to display news headlines
-        JFrame newsFrame = new JFrame("Astronomy News Headlines");
-        newsFrame.setSize(400, 300);
-        newsFrame.setLayout(new BorderLayout());
-        newsFrame.setLocationRelativeTo(null); // Center the window
-
-        JTextArea newsTextArea = new JTextArea();
-        newsTextArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(newsTextArea);
-
-        // Append each headline to the text area
-        for (String headline : headlines) {
-            newsTextArea.append(headline + "\n");
-        }
-
-        newsFrame.add(scrollPane, BorderLayout.CENTER);
-        newsFrame.setVisible(true);
     }
 
     public static void main(String[] args) {
