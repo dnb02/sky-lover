@@ -146,10 +146,14 @@ public class SolarPositionCalculator extends JFrame {
                 // Close resources
                 //inputStream.close();
                 //outputStream.close();
-            } catch (IOException | ClassNotFoundException ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Error calculating solar position!", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+	} catch (ConnectException ex) {
+	    ex.printStackTrace();
+	    JOptionPane.showMessageDialog(this, "Cannot connect to server. Please ensure the server is up and running.", "Connection Error", JOptionPane.ERROR_MESSAGE);
+	} catch (IOException | ClassNotFoundException ex) {
+	    ex.printStackTrace();
+	    JOptionPane.showMessageDialog(this, "Error communicating with server.", "Error", JOptionPane.ERROR_MESSAGE);
+	}
+
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Invalid input. Please enter numbers only.", "Error", JOptionPane.ERROR_MESSAGE);
         }
