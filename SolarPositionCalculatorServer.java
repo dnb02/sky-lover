@@ -50,7 +50,7 @@ public class SolarPositionCalculatorServer {
                 // Receive Spos object from the client
                 ObjectInputStream inputStream = new ObjectInputStream(clientSocket.getInputStream());
                 Spos spos = (Spos) inputStream.readObject();
-                inputStream.close();
+                System.out.println("Received Spos object from client: " + spos);
 
                 // Calculate sun position and update Spos object
                 calculateSunPosition(spos);
@@ -59,7 +59,9 @@ public class SolarPositionCalculatorServer {
                 ObjectOutputStream outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
                 outputStream.writeObject(spos);
                 outputStream.flush();
+                inputStream.close();
                 outputStream.close();
+                System.out.println("Sent updated Spos object back to client: " + spos);
 
                 // Close client socket
                 clientSocket.close();
@@ -74,21 +76,18 @@ public class SolarPositionCalculatorServer {
             double elevation = spos.getElevation();
             double pressure = spos.getAirPressure();
             double temperature = spos.getTemperature();
-		
+			
+            ZonedDateTime dateTime = ZonedDateTime.now();
 
-
-        var dateTime = new ZonedDateTime.now();
-
-        // replace SPA with Grena3 as needed
-        var position = SPA.calculateSolarPosition(
-                dateTime,
-                latitude, // latitude (degrees)
-                longitude, // longitude (degrees)
-                elevation, // elevation (m)
-                DeltaT.estimate(dateTime.toLocalDate()), // delta T (s)
-                pressure, // avg. air pressure (hPa)
-               temperature); // avg. air temperature (°C)
-
+            // Calculate solar position
+            var position = SPA.calculateSolarPosition(
+                    dateTime,
+                    latitude, // latitude (degrees)
+                    longitude, // longitude (degrees)
+                    elevation, // elevation (m)
+                    DeltaT.estimate(dateTime.toLocalDate()), // delta T (s)
+                    pressure, // avg. air pressure (hPa)
+                    temperature); // avg. air temperature (°C)
 
             String sunPosition = position.toString(); 
 
