@@ -46,6 +46,10 @@ public class SolarPositionCalculator extends JFrame {
         resultArea = new JTextArea(10, 30);
         resultArea.setEditable(false);
 
+        // Initialize cityComboBox and populate it with city names
+        cityComboBox = new JComboBox<>();
+        populateCities();
+
         // Layout
         setLayout(new GridLayout(8, 2));
 
@@ -123,27 +127,56 @@ public class SolarPositionCalculator extends JFrame {
 
             // Connect to the Solar Position Calculator Server
             try (Socket socket = new Socket("10.110.11.34", 12347)) {
+                System.out.println("Connected to server.");
+
                 // Send Spos object to the server
                 ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
                 outputStream.writeObject(spos);
                 outputStream.flush();
+                System.out.println("Sent Spos object to server.");
 
                 // Receive updated Spos object from the server
                 ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
                 Spos updatedSpos = (Spos) inputStream.readObject();
+                System.out.println("Received updated Spos object from server.");
 
                 // Display solar position in the result area
                 resultArea.setText(updatedSpos.getSunpos());
 
                 // Close resources
-                inputStream.close();
-                outputStream.close();
+                //inputStream.close();
+                //outputStream.close();
             } catch (IOException | ClassNotFoundException ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(this, "Error calculating solar position!", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Invalid input. Please enter numbers only.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void populateCities() {
+        try {
+            // Connect to the SQLite database
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:cities.db");
+            Statement stmt = conn.createStatement();
+
+            // Execute query to get cities
+            ResultSet rs = stmt.executeQuery("SELECT name FROM cities");
+
+            // Populate the combo box with city names
+            while (rs.next()) {
+                String cityName = rs.getString("name");
+                cityComboBox.addItem(cityName);
+            }
+
+            // Close connections
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error loading cities from database!", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

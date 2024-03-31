@@ -1,4 +1,5 @@
-public class Spos {
+import java.io.Serializable;
+public class Spos implements Serializable{
     private double latitude;
     private double longitude;
     private double airPressure;
@@ -65,7 +66,6 @@ public class Spos {
         this.sunpos = sunpos;
     }
 
-    @Override
     public String toString() {
         return "Latitude: " + latitude + "\n" +
                 "Longitude: " + longitude + "\n" +
