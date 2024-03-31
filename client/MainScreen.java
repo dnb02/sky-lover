@@ -25,9 +25,9 @@ public class MainScreen extends JFrame {
 
         // Panel for buttons
         JPanel buttonPanel = new JPanel(new FlowLayout());
-        JButton button1 = new JButton("Button 1");
-        JButton button2 = new JButton("Button 2");
-        JButton button3 = new JButton("Button 3");
+        JButton button1 = new JButton("Get Astronomy Picture of the Day");
+        JButton button2 = new JButton("Calculate Sun's Position now");
+        JButton button3 = new JButton("Explore today's Astronomy News");
         buttonPanel.add(button1);
         buttonPanel.add(button2);
         buttonPanel.add(button3);

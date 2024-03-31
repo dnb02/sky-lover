@@ -37,9 +37,9 @@ public class ApodGui extends JFrame {
         explanationLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         explanationLabel.setVerticalAlignment(SwingConstants.TOP);
         explanationLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        explanationLabel.setPreferredSize(new Dimension(800, 200)); // Wider size
-        explanationLabel.setMaximumSize(new Dimension(800, 200)); // Wider size
-        explanationLabel.setMinimumSize(new Dimension(800, 200)); // Wider size
+        explanationLabel.setPreferredSize(new Dimension(400, 100)); // Wider size
+        explanationLabel.setMaximumSize(new Dimension(400, 100)); // Wider size
+        explanationLabel.setMinimumSize(new Dimension(400,100)); // Wider size
         explanationLabel.setOpaque(true);
         explanationLabel.setBackground(Color.WHITE);
         explanationLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -51,7 +51,7 @@ public class ApodGui extends JFrame {
         JScrollPane explanationScrollPane = new JScrollPane(explanationLabel);
         explanationScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         explanationScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Disable horizontal scrolling
-        explanationScrollPane.setPreferredSize(new Dimension(800, 200)); // Wider size
+        explanationScrollPane.setPreferredSize(new Dimension(400, 100)); // Wider size
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));

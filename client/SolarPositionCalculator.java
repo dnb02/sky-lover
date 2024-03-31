@@ -26,7 +26,7 @@ public class SolarPositionCalculator extends JFrame {
     public SolarPositionCalculator(String ipAddress) {
         this.ip = ipAddress;
 	setTitle("Solar Position Calculator");
-        setSize(400, 300);
+        setSize(500, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
