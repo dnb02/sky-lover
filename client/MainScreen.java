@@ -50,7 +50,7 @@ public class MainScreen extends JFrame {
         button2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Open the SolarPositionCalculator GUI
-                openSolarPositionCalculatorGUI();
+                //openSolarPositionCalculatorGUI();
             }
         });
 
