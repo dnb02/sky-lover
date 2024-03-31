@@ -17,16 +17,17 @@ public class SolarPositionCalculator extends JFrame {
     private JButton calculateButton;
     private JTextArea resultArea;
     private JComboBox<String> cityComboBox;
-
+    public static String ip;
     // Default values for elevation, air pressure, and air temperature
     private static final double DEFAULT_ELEVATION = 100.0; // meters
     private static final double DEFAULT_PRESSURE = 1013.25; // hPa
     private static final double DEFAULT_TEMPERATURE = 20.0; // °C
 
-    public SolarPositionCalculator() {
-        setTitle("Solar Position Calculator");
+    public SolarPositionCalculator(String ipAddress) {
+        this.ip = ipAddress;
+	setTitle("Solar Position Calculator");
         setSize(400, 300);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
         // Initialize components
@@ -72,7 +73,7 @@ public class SolarPositionCalculator extends JFrame {
         calculateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                calculateAndDisplaySolarPosition();
+                calculateAndDisplaySolarPosition(ipAddress);
             }
         });
 
@@ -114,7 +115,7 @@ public class SolarPositionCalculator extends JFrame {
         }
     }
 
-    private void calculateAndDisplaySolarPosition() {
+    private void calculateAndDisplaySolarPosition(String ipAddress) {
         try {
             double latitude = Double.parseDouble(latitudeField.getText());
             double longitude = Double.parseDouble(longitudeField.getText());
@@ -126,7 +127,7 @@ public class SolarPositionCalculator extends JFrame {
             Spos spos = new Spos(latitude, longitude, pressure, elevation, temperature, "");
 
             // Connect to the Solar Position Calculator Server
-            try (Socket socket = new Socket("10.110.11.34", 12347)) {
+            try (Socket socket = new Socket(ipAddress, 12347)) {
                 System.out.println("Connected to server.");
 
                 // Send Spos object to the server
@@ -144,8 +145,8 @@ public class SolarPositionCalculator extends JFrame {
                 resultArea.setText(updatedSpos.getSunpos());
 
                 // Close resources
-                //inputStream.close();
-                //outputStream.close();
+                inputStream.close();
+                outputStream.close();
 	} catch (ConnectException ex) {
 	    ex.printStackTrace();
 	    JOptionPane.showMessageDialog(this, "Cannot connect to server. Please ensure the server is up and running.", "Connection Error", JOptionPane.ERROR_MESSAGE);
@@ -188,7 +189,7 @@ public class SolarPositionCalculator extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new SolarPositionCalculator().setVisible(true);
+                new SolarPositionCalculator(ip).setVisible(true);
             }
         });
     }
